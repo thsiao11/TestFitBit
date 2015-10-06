@@ -1,0 +1,27 @@
+Index: app/src/main/java/com/zeeh/testfitbit/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/zeeh/testfitbit/MainActivity.java	(revision )
++++ app/src/main/java/com/zeeh/testfitbit/MainActivity.java	(revision )
+@@ -14,7 +14,6 @@
+ import java.io.IOException;
+ import java.net.HttpURLConnection;
+ import java.net.URL;
+-import java.util.Map;
+ 
+ public class MainActivity extends AppCompatActivity {
+ 
+@@ -186,11 +185,6 @@
+                 urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+ 
+                 urlConnection.connect();
+-                if (urlConnection.getResponseCode() != -1) {
+-                    for (Map.Entry<String, String> entry : urlConnection.getHeaderFields().entrySet()) {
+-                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+-                    }
+-                }
+ 
+             } catch (IOException e) {
+                 Log.e(LOG_TAG, "Error ", e);

@@ -1,0 +1,135 @@
+Index: app/src/main/java/com/zeeh/testfitbit/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/zeeh/testfitbit/MainActivity.java	(revision )
++++ app/src/main/java/com/zeeh/testfitbit/MainActivity.java	(revision )
+@@ -14,6 +14,7 @@
+ import java.io.IOException;
+ import java.net.HttpURLConnection;
+ import java.net.URL;
++import java.util.List;
+ import java.util.Map;
+ 
+ public class MainActivity extends AppCompatActivity {
+@@ -59,9 +60,13 @@
+ 
+         new ReqAsyncTask(REQ_AUTH_CODE).execute();
+ 
+-//        new ReqAsyncTask(REQ_AUTH_TOKEN).execute();
++        Log.v(LOG_TAG, "code is :" + authCode);
+ 
++//        if (authToken != null) {
+-//        new ReqAsyncTask(REQ_USER_INFO).execute();
++//            new ReqAsyncTask(REQ_USER_INFO).execute();
++//        } else {
++//            Log.v(LOG_TAG,"code is null");
++//        }
+ 
+ //        new ReqAsyncTask(REQ_AUTH_NEW_TOKEN).execute();
+ 
+@@ -83,9 +88,8 @@
+             switch(requestCode) {
+                 case REQ_AUTH_CODE:
+                     getAuthCode();
+-                    break;
+-                case REQ_AUTH_TOKEN:
++                    if (authCode != null)
+-                    getAuthToken();
++                        getAuthToken();
+                     break;
+                 case REQ_USER_INFO:
+                     getUserInfo();
+@@ -98,11 +102,11 @@
+             return null;
+         }
+ 
+-        @Override
+-        protected void onPostExecute(Void unused) {
+-            super.onPostExecute(unused);
+-            processCallBackURL();
+-        }
++//        @Override
++//        protected void onPostExecute(Void unused) {
++//            super.onPostExecute(unused);
++//            processCallBackURL();
++//        }
+ 
+         //get Authorization Code
+         private void getAuthCode() {
+@@ -131,31 +135,11 @@
+                     urlConnection.disconnect();
+                 }
+             }
++
++            processCallBackURL();
+             return;
+         }
+ 
+-        private void processCallBackURL() {
+-
+-            webView.setWebViewClient(new WebViewClient() {
+-
+-                @Override
+-                public void onPageFinished(WebView view, String url) {
+-                    super.onPageFinished(view, url);
+-                    if (url.substring(0,26).compareTo("http://testcustomurischeme") == 0) {
+-                        authCode = url.split("=")[1];
+-                    }
+-                    Log.v(LOG_TAG, "Here's the auth_code " + authCode);
+-                }
+-                public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+-                    Log.v(LOG_TAG,description+", "+failingUrl);
+-// Hide the error displayed in the webview for invalid callback url http://testcustomurischeme
+-                    view.setVisibility(View.INVISIBLE);
+-                }
+-            });
+-
+-            webView.loadUrl("https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=229VWX&scope=activity");
+-        }
+-
+         private void getAuthToken() {
+ 
+             HttpURLConnection urlConnection = null;
+@@ -187,8 +171,8 @@
+ 
+                 urlConnection.connect();
+                 if (urlConnection.getResponseCode() != -1) {
+-                    for (Map.Entry<String, String> entry : urlConnection.getHeaderFields().entrySet()) {
+-                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
++                    for (Map.Entry<String, List<String>> entry : urlConnection.getHeaderFields().entrySet()) {
++                        Log.v(LOG_TAG, "Key = " + entry.getKey());
+                     }
+                 }
+ 
+@@ -206,5 +190,29 @@
+ 
+         private void getRefreshToken() {}
+     }
++
++    private void processCallBackURL() {
++
++        webView.setWebViewClient(new WebViewClient() {
++
++            @Override
++            public void onPageFinished(WebView view, String url) {
++                super.onPageFinished(view, url);
++                if (url.substring(0,26).compareTo("http://testcustomurischeme") == 0) {
++                    authCode = url.split("=")[1];
++                }
++                Log.v(LOG_TAG, "Here's the auth_code " + authCode);
++            }
++            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
++                Log.v(LOG_TAG,description+", "+failingUrl);
++// Hide the error displayed in the webview for invalid callback url http://testcustomurischeme
++                view.setVisibility(View.INVISIBLE);
++            }
++        });
++
++        webView.loadUrl("https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=229VWX&scope=activity");
++    }
++
++
+ }
+ 
